@@ -1,0 +1,39 @@
+# Generated validation and conversion artifacts
+/tmp/
+/processed/
+/outputs/
+/checkpoints/
+
+# Local copies of large datasets and archives
+/datasets/
+*.zip
+*.tar
+*.tar.gz
+*.parquet
+
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environments
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Notebook and editor metadata
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
