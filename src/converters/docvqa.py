@@ -18,16 +18,12 @@ class MediaStore:
         self.media_dir.mkdir(parents=True, exist_ok=True)
         self._by_digest: dict[str, str] = {}
 
-    def materialize(self, image: dict[str, Any], image_path: str | None) -> str:
-        image_bytes = image.get("bytes")
-        if image_bytes is None:
-            raise ValueError("DocVQA image resource has no embedded bytes")
-        data = bytes(image_bytes)
+    def _materialize_bytes(self, data: bytes, original_name: str | None) -> str:
         digest = hashlib.sha256(data).hexdigest()
         if digest in self._by_digest:
             return self._by_digest[digest]
 
-        original_name = Path(image_path or "").name
+        original_name = Path(original_name or "").name
         suffix = Path(original_name).suffix or ".bin"
         stem = Path(original_name).stem or "image"
         stem = re.sub(r"[^A-Za-z0-9._-]+", "_", stem).strip("._") or "image"
@@ -41,6 +37,17 @@ class MediaStore:
         media_path = f"media/{filename}"
         self._by_digest[digest] = media_path
         return media_path
+
+    def materialize(self, image: dict[str, Any], image_path: str | None) -> str:
+        image_bytes = image.get("bytes")
+        if image_bytes is None:
+            raise ValueError("DocVQA image resource has no embedded bytes")
+        return self._materialize_bytes(bytes(image_bytes), image_path)
+
+    def materialize_file(self, source_path: Path) -> str:
+        if not source_path.is_file():
+            raise FileNotFoundError(f"Image file not found: {source_path}")
+        return self._materialize_bytes(source_path.read_bytes(), source_path.name)
 
 
 class DocVQAConverter(Converter):
