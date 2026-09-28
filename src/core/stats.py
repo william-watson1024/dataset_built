@@ -14,6 +14,7 @@ class Stats:
         self.tasks: Counter[str] = Counter()
         self.languages: Counter[str] = Counter()
         self.formats: Counter[str] = Counter()
+        self.subsets: Counter[str] = Counter()
         self.image_counts: Counter[str] = Counter()
         self.image_paths: set[str] = set()
         self.total_references = 0
@@ -45,6 +46,9 @@ class Stats:
             self.lengths["output_chars"].append(len(sample["output"]["text"]))
         else:
             self.unsupervised += 1
+        subset = sample.get("meta", {}).get("subset")
+        if subset:
+            self.subsets[str(subset)] += 1
 
     @staticmethod
     def _summary(values: list[int]) -> dict[str, float | int]:
@@ -59,8 +63,11 @@ class Stats:
             "splits": dict(sorted(self.splits.items())),
             "tasks": dict(sorted(self.tasks.items())),
             "languages": dict(sorted(self.languages.items())),
+            "subsets": dict(sorted(self.subsets.items())),
             "supervised": self.supervised,
             "unsupervised": self.unsupervised,
+            "samples_with_images": self.with_images,
+            "samples_without_images": self.without_images,
             "with_images": self.with_images,
             "without_images": self.without_images,
             "total_references": self.total_references,
