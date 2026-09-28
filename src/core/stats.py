@@ -22,6 +22,10 @@ class Stats:
         self.program_samples = 0
         self.steps_samples = 0
         self.gold_evidence_samples = 0
+        self.answer_types: Counter[str] = Counter()
+        self.answer_froms: Counter[str] = Counter()
+        self.scales: Counter[str] = Counter()
+        self.derivation_samples = 0
         self.supervised = 0
         self.unsupervised = 0
         self.with_images = 0
@@ -36,6 +40,19 @@ class Stats:
         self.languages[sample["language"]] += 1
         self.formats[sample["output"]["format"]] += 1
         supervision = sample.get("annotations", {}).get("supervision", {})
+        evaluation = sample.get("annotations", {}).get("evaluation", {})
+        for field, counter in (
+            ("answer_type", self.answer_types),
+            ("answer_from", self.answer_froms),
+            ("scale", self.scales),
+        ):
+            if field not in evaluation:
+                continue
+            value = evaluation.get(field)
+            if value is not None:
+                counter[str(value)] += 1
+        if supervision.get("derivation") not in (None, ""):
+            self.derivation_samples += 1
         if supervision.get("program") not in (None, ""):
             self.program_samples += 1
         if supervision.get("steps") not in (None, [], ""):
@@ -90,6 +107,11 @@ class Stats:
             "program_samples": self.program_samples,
             "steps_samples": self.steps_samples,
             "gold_evidence_samples": self.gold_evidence_samples,
+            "answer_types": dict(sorted(self.answer_types.items())),
+            "answer_froms": dict(sorted(self.answer_froms.items())),
+            "scales": dict(sorted(self.scales.items())),
+            "derivation_samples": self.derivation_samples,
+            "without_derivation": self.total - self.derivation_samples,
             "image_count": {
                 "distribution": dict(sorted(self.image_counts.items(), key=lambda item: int(item[0])))
             },

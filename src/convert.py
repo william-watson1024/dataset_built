@@ -10,13 +10,20 @@ from src.converters.chartqa import ChartQAConverter
 from src.converters.mmtab import MMTabConverter
 from src.converters.docvqa import DocVQAConverter
 from src.converters.finqa import FinQAConverter
+from src.converters.tatqa import TATQAConverter
 from src.core.config import ConfigError, get_runtime_paths, load_dataset_config
 from src.core.stats import Stats
 from src.core.validator import SchemaValidator, ValidationError
 from src.core.writer import JsonlWriter
 
 
-CONVERTERS = {"docvqa": DocVQAConverter, "chartqa": ChartQAConverter, "mmtab": MMTabConverter, "finqa": FinQAConverter}
+CONVERTERS = {
+    "docvqa": DocVQAConverter,
+    "chartqa": ChartQAConverter,
+    "mmtab": MMTabConverter,
+    "finqa": FinQAConverter,
+    "tatqa": TATQAConverter,
+}
 
 
 def _parse_args() -> argparse.Namespace:
@@ -58,7 +65,7 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter, FinQAConverter):
+    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter, FinQAConverter, TATQAConverter):
         converter = converter_class(config, root, output_root / "media")
     else:
         converter = converter_class(config, root)

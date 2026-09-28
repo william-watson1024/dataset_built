@@ -1,0 +1,51 @@
+schema_version: "1.0"
+
+dataset:
+  name: TAT-QA
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: tatqa
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/TAT-QA/tatqa_dataset_train.json
+  validation:
+    - ${DATASETS_ROOT}/TAT-QA/tatqa_dataset_dev.json
+
+split_aliases:
+  train: train
+  dev: validation
+  validation: validation
+
+evaluation:
+  evaluator: tatqa
+  metrics:
+    - exact_match
+    - f1
+  rules:
+    preserve_derivation: true
+    preserve_answer_metadata: true
+    official_test_split_available: false
+    tasks:
+      financial_table_reasoning:
+        source: TAT-QA
+        answer_types:
+          - span
+          - multi-span
+          - arithmetic
+          - count
+        answer_from:
+          - text
+          - table
+          - table-text
+        description: financial report table and text reasoning
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/tatqa/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/tatqa/validation.jsonl

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .dataset import TableRecord
-from .table_renderer import RenderResult, TableRenderer, normalize_table
+from .table_renderer import RenderResult, TableRenderer, normalize_table, table_hash
 
 
 class TATQATableRenderer:
@@ -15,7 +15,15 @@ class TATQATableRenderer:
     dataset = "TAT-QA"
 
     def __init__(self, engine: TableRenderer | None = None) -> None:
-        self.engine = engine or TableRenderer()
+        self.engine = engine or TableRenderer(browser="firefox_bidi")
+
+    @staticmethod
+    def normalize(table: Any) -> list[list[str]]:
+        return normalize_table(table)
+
+    @staticmethod
+    def compute_hash(table: Any) -> str:
+        return table_hash(table)
 
     def load_tables(self, datasets_root: Path) -> list[TableRecord]:
         records: list[TableRecord] = []
