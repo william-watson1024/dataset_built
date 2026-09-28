@@ -34,6 +34,13 @@ evaluation:
   rules:
     match_exact_answer: true
     answers_are_available_for_test: true
+    tasks:
+      chart_question_answering:
+        source: ChartQA
+        subsets:
+          - human
+          - machine
+        description: chart image question answering
 
 files:
   train:

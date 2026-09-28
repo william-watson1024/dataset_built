@@ -53,6 +53,10 @@ evaluation:
     match_against_any_reference: true
     similarity_threshold: 0.5
     test_answers_may_be_missing: true
+    tasks:
+      document_visual_question_answering:
+        source: DocVQA
+        description: document image visual question answering
 
 files:
   train:
