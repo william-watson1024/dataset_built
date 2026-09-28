@@ -1,0 +1,63 @@
+schema_version: "1.0"
+
+dataset:
+  name: DocVQA
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: docvqa
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/DocVQA/train-00000-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00001-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00002-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00003-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00004-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00005-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00006-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00007-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00008-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00009-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00010-of-00012.parquet
+    - ${DATASETS_ROOT}/DocVQA/train-00011-of-00012.parquet
+  validation:
+    - ${DATASETS_ROOT}/DocVQA/validation-00000-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/validation-00001-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/validation-00002-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/validation-00003-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/validation-00004-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/validation-00005-of-00006.parquet
+  test:
+    - ${DATASETS_ROOT}/DocVQA/test-00000-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/test-00001-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/test-00002-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/test-00003-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/test-00004-of-00006.parquet
+    - ${DATASETS_ROOT}/DocVQA/test-00005-of-00006.parquet
+
+split_aliases:
+  train: train
+  validation: validation
+  val: validation
+  test: test
+
+evaluation:
+  evaluator: docvqa
+  metrics:
+    - ANLS
+  rules:
+    match_against_any_reference: true
+    similarity_threshold: 0.5
+    test_answers_may_be_missing: true
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/docvqa/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/docvqa/validation.jsonl
+  test:
+    - ${PROCESSED_ROOT}/docvqa/test.jsonl
