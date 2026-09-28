@@ -9,13 +9,14 @@ from typing import Any
 from src.converters.chartqa import ChartQAConverter
 from src.converters.mmtab import MMTabConverter
 from src.converters.docvqa import DocVQAConverter
+from src.converters.finqa import FinQAConverter
 from src.core.config import ConfigError, get_runtime_paths, load_dataset_config
 from src.core.stats import Stats
 from src.core.validator import SchemaValidator, ValidationError
 from src.core.writer import JsonlWriter
 
 
-CONVERTERS = {"docvqa": DocVQAConverter, "chartqa": ChartQAConverter, "mmtab": MMTabConverter}
+CONVERTERS = {"docvqa": DocVQAConverter, "chartqa": ChartQAConverter, "mmtab": MMTabConverter, "finqa": FinQAConverter}
 
 
 def _parse_args() -> argparse.Namespace:
@@ -57,7 +58,7 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter):
+    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter, FinQAConverter):
         converter = converter_class(config, root, output_root / "media")
     else:
         converter = converter_class(config, root)
@@ -70,6 +71,9 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
             continue
         output = _output_path(config, split)
         read_count = success_count = failure_count = 0
+        prepare_split = getattr(converter, "prepare_split", None)
+        if prepare_split is not None:
+            prepare_split(split, limit=limit)
         with JsonlWriter(output) as writer:
             samples = iter(converter.iter_samples(split))
             while limit is None or read_count < limit:
@@ -102,6 +106,9 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
             "output": str(output),
         }
 
+    close_converter = getattr(converter, "close", None)
+    if close_converter is not None:
+        close_converter()
     stats_path = output_root / "stats.json"
     stats.write(stats_path)
     print("Conversion summary:")

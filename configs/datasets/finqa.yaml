@@ -1,0 +1,58 @@
+schema_version: "1.0"
+
+dataset:
+  name: FinQA
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: finqa
+  version: "1.0"
+
+paths:
+  source_dir: ${DATASETS_ROOT}/FinQA/dataset
+  output_dir: ${PROCESSED_ROOT}/finqa
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/FinQA/dataset/train.json
+  validation:
+    - ${DATASETS_ROOT}/FinQA/dataset/dev.json
+  test:
+    - ${DATASETS_ROOT}/FinQA/dataset/test.json
+
+split_aliases:
+  train: train
+  dev: validation
+  validation: validation
+  test: test
+
+evaluation:
+  evaluator: finqa
+  metrics:
+    - execution_accuracy
+    - program_accuracy
+  rules:
+    evaluate_program: true
+    preserve_program_supervision: true
+    tasks:
+      financial_table_reasoning:
+        source: FinQA
+        description: financial report table reasoning with text evidence
+        raw_fields:
+          - pre_text
+          - post_text
+          - table
+          - table_ori
+          - qa.program
+          - qa.steps
+          - qa.gold_inds
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/finqa/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/finqa/validation.jsonl
+  test:
+    - ${PROCESSED_ROOT}/finqa/test.jsonl

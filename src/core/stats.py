@@ -17,7 +17,11 @@ class Stats:
         self.subsets: Counter[str] = Counter()
         self.image_counts: Counter[str] = Counter()
         self.image_paths: set[str] = set()
+        self.group_ids: set[str] = set()
         self.total_references = 0
+        self.program_samples = 0
+        self.steps_samples = 0
+        self.gold_evidence_samples = 0
         self.supervised = 0
         self.unsupervised = 0
         self.with_images = 0
@@ -28,8 +32,16 @@ class Stats:
         self.total += 1
         self.splits[sample["split"]] += 1
         self.tasks[sample["task"]] += 1
+        self.group_ids.add(sample["meta"]["group_id"])
         self.languages[sample["language"]] += 1
         self.formats[sample["output"]["format"]] += 1
+        supervision = sample.get("annotations", {}).get("supervision", {})
+        if supervision.get("program") not in (None, ""):
+            self.program_samples += 1
+        if supervision.get("steps") not in (None, [], ""):
+            self.steps_samples += 1
+        if supervision.get("gold_inds") not in (None, {}, ""):
+            self.gold_evidence_samples += 1
         images = sample["input"]["images"]
         image_count = len(images)
         self.total_references += image_count
@@ -72,6 +84,12 @@ class Stats:
             "without_images": self.without_images,
             "total_references": self.total_references,
             "unique_images": len(self.image_paths),
+            "table_count": self.total_references,
+            "unique_tables": len(self.image_paths),
+            "unique_groups": len(self.group_ids),
+            "program_samples": self.program_samples,
+            "steps_samples": self.steps_samples,
+            "gold_evidence_samples": self.gold_evidence_samples,
             "image_count": {
                 "distribution": dict(sorted(self.image_counts.items(), key=lambda item: int(item[0])))
             },
