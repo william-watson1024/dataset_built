@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from src.converters.chartqa import ChartQAConverter
+from src.converters.mmtab import MMTabConverter
 from src.converters.docvqa import DocVQAConverter
 from src.core.config import ConfigError, get_runtime_paths, load_dataset_config
 from src.core.stats import Stats
@@ -14,7 +15,7 @@ from src.core.validator import SchemaValidator, ValidationError
 from src.core.writer import JsonlWriter
 
 
-CONVERTERS = {"docvqa": DocVQAConverter, "chartqa": ChartQAConverter}
+CONVERTERS = {"docvqa": DocVQAConverter, "chartqa": ChartQAConverter, "mmtab": MMTabConverter}
 
 
 def _parse_args() -> argparse.Namespace:
@@ -56,7 +57,7 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if converter_class in (DocVQAConverter, ChartQAConverter):
+    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter):
         converter = converter_class(config, root, output_root / "media")
     else:
         converter = converter_class(config, root)
@@ -65,6 +66,8 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
     summary: dict[str, dict[str, Any]] = {}
 
     for split in ("train", "validation", "test"):
+        if not config.get("files", {}).get(split):
+            continue
         output = _output_path(config, split)
         read_count = success_count = failure_count = 0
         with JsonlWriter(output) as writer:

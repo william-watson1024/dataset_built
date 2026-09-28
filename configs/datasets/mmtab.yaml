@@ -1,0 +1,78 @@
+schema_version: "1.0"
+
+dataset:
+  name: MMTab
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: mmtab
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/MMTab/MMTab-instruct_sft_data_llava_format_232K.json
+    - ${DATASETS_ROOT}/MMTab/MMTab-instruct_table_images_82K.zip
+  test:
+    - ${DATASETS_ROOT}/MMTab/MMTab-eval_test_data_49K.json
+    - ${DATASETS_ROOT}/MMTab/MMTab-eval_table_images_23K.zip
+
+split_aliases:
+  train: train
+  eval: test
+  test: test
+
+evaluation:
+  evaluator: mmtab
+  metrics:
+    - exact_match
+  rules:
+    preserve_original_task_type: true
+    preserve_eval_answer_list: true
+    eval_is_not_training_data: true
+    # Task catalog is kept under rules because the formal Dataset Config Schema
+    # intentionally rejects unknown top-level fields.
+    tasks:
+      mmtab_table_question_answering:
+        raw_types: [TQA, TABMWP, WTQ, InfoTabs, HiTab, FeTaQA, TAT-QA, AIT-QA]
+        sources: [instruct, eval]
+      mmtab_table_fact_verification:
+        raw_types: [TFV, TabFact]
+        sources: [instruct, eval]
+      mmtab_table_to_text:
+        raw_types: [T2T, ToTTo, WikiBIO, Rotowire]
+        sources: [instruct, eval]
+      mmtab_table_size_detection:
+        raw_types: [TSD, OOD_TSD]
+        sources: [eval]
+      mmtab_table_cell_localization:
+        raw_types: [TCL, OOD_TCL]
+        sources: [eval]
+      mmtab_row_column_extraction:
+        raw_types: [RCE, OOD_RCE]
+        sources: [instruct, eval]
+      mmtab_merged_cell_detection:
+        raw_types: [MCD]
+        sources: [instruct, eval]
+      mmtab_table_cell_extraction:
+        raw_types: [TCE, OOD_TCE]
+        sources: [instruct, eval]
+      mmtab_table_cell_recognition:
+        raw_types: [TCR]
+        sources: [instruct]
+      mmtab_table_structure_recognition:
+        raw_types: [TSR]
+        sources: [instruct]
+      mmtab_table_multitask:
+        raw_types: [table]
+        sources: [instruct]
+      mmtab_table_recognition:
+        raw_types: [TR, table_recognition]
+        sources: [instruct, eval]
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/mmtab/train.jsonl
+  test:
+    - ${PROCESSED_ROOT}/mmtab/test.jsonl

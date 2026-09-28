@@ -38,11 +38,14 @@ class MediaStore:
         self._by_digest[digest] = media_path
         return media_path
 
+    def materialize_bytes(self, data: bytes, original_name: str | None) -> str:
+        return self._materialize_bytes(data, original_name)
+
     def materialize(self, image: dict[str, Any], image_path: str | None) -> str:
         image_bytes = image.get("bytes")
         if image_bytes is None:
             raise ValueError("DocVQA image resource has no embedded bytes")
-        return self._materialize_bytes(bytes(image_bytes), image_path)
+        return self.materialize_bytes(bytes(image_bytes), image_path)
 
     def materialize_file(self, source_path: Path) -> str:
         if not source_path.is_file():
