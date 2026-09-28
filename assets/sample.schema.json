@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mmllm-jinshan.local/schema/sample.schema.json",
+  "title": "Canonical Sample Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "source",
+    "split",
+    "task",
+    "language",
+    "input",
+    "output",
+    "annotations",
+    "meta"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "source": { "type": "string" },
+    "split": { "type": "string", "enum": ["train", "validation", "test"] },
+    "task": { "type": "string" },
+    "language": { "type": "string" },
+    "input": { "$ref": "#/$defs/input" },
+    "output": { "$ref": "#/$defs/output" },
+    "annotations": { "$ref": "#/$defs/annotations" },
+    "meta": { "$ref": "#/$defs/meta" }
+  },
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["images", "context", "prompt", "history"],
+      "properties": {
+        "images": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/imageResource" }
+        },
+        "context": { "type": "string" },
+        "prompt": { "type": "string" },
+        "history": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/historyMessage" }
+        }
+      }
+    },
+    "imageResource": {
+      "oneOf": [
+        { "$ref": "#/$defs/fileImage" },
+        { "$ref": "#/$defs/zipImage" },
+        { "$ref": "#/$defs/parquetImage" }
+      ]
+    },
+    "fileImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storage", "path"],
+      "properties": {
+        "storage": { "const": "file" },
+        "path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "zipImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storage", "path", "member"],
+      "properties": {
+        "storage": { "const": "zip" },
+        "path": { "type": "string", "minLength": 1 },
+        "member": { "type": "string", "minLength": 1 }
+      }
+    },
+    "parquetImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storage", "path", "row", "field"],
+      "properties": {
+        "storage": { "const": "parquet" },
+        "path": { "type": "string", "minLength": 1 },
+        "row": { "type": "integer", "minimum": 0 },
+        "field": { "type": "string", "minLength": 1 },
+        "image_path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "historyMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "content"],
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "assistant"] },
+        "content": { "type": "string" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "format", "references"],
+      "properties": {
+        "text": { "type": "string" },
+        "format": { "type": "string", "enum": ["text", "number", "json", "html"] },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supervision", "evaluation", "raw"],
+      "properties": {
+        "supervision": { "type": "object", "additionalProperties": true },
+        "evaluation": { "type": "object", "additionalProperties": true },
+        "raw": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "group_id", "subset", "original_split", "transforms"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "group_id": { "type": "string" },
+        "subset": { "type": ["string", "null"] },
+        "original_split": { "type": "string" },
+        "transforms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_file": { "type": "string" },
+        "source_context_ref": { "type": "string" },
+        "schema_validation_round": { "type": "string" }
+      }
+    }
+  }
+}

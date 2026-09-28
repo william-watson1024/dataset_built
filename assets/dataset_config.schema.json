@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mmllm-jinshan.local/schema/dataset_config.schema.json",
+  "title": "Canonical Dataset Config Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "dataset",
+    "conversion",
+    "source_files",
+    "split_aliases",
+    "evaluation",
+    "files"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "dataset": { "$ref": "#/$defs/dataset" },
+    "conversion": { "$ref": "#/$defs/conversion" },
+    "source_files": { "$ref": "#/$defs/splitFiles" },
+    "split_aliases": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "evaluation": { "$ref": "#/$defs/evaluation" },
+    "files": { "$ref": "#/$defs/splitFiles" }
+  },
+  "$defs": {
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "languages"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "languages": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "conversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["converter", "version"],
+      "properties": {
+        "converter": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "splitFiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "train": { "$ref": "#/$defs/fileList" },
+        "validation": { "$ref": "#/$defs/fileList" },
+        "test": { "$ref": "#/$defs/fileList" }
+      }
+    },
+    "fileList": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluator", "metrics", "rules"],
+      "properties": {
+        "evaluator": { "type": "string" },
+        "metrics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rules": { "type": "object", "additionalProperties": true }
+      }
+    }
+  }
+}
