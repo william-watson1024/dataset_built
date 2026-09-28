@@ -1,0 +1,23 @@
+schema_version: "1.0"                                # 当前统一数据 Schema 的版本
+
+dataset:                                             # 原始数据集信息
+  name: FinQA                                        # 数据集名称
+  version: "1.0"                                     # 使用的原始数据集版本
+
+conversion:                                          # 数据转换配置
+  converter: finqa                                   # 使用的 Converter
+  version: "1.0"                                     # Converter 版本
+
+evaluation:                                          # 官方评测配置
+  evaluator: finqa                                   # 使用的评测器
+  metrics:                                           # 需要计算的评价指标
+    - execution_accuracy                             # 答案执行结果准确率
+    - program_accuracy                               # 推理程序准确率
+  rules:                                             # 官方指标对应的具体计算规则
+    normalize_numbers: true                          # 是否进行数值标准化
+    evaluate_program: true                           # 是否评测 Program
+
+files:                                               # 转换完成后的数据文件
+  train: processed/finqa/train.jsonl                 # 训练集
+  validation: processed/finqa/validation.jsonl       # 验证集
+  test: processed/finqa/test.jsonl                   # 测试集

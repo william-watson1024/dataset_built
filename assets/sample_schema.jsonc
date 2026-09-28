@@ -1,0 +1,40 @@
+{                                                     // 一条统一格式的数据样本
+  "id": "finqa:train:12345",                         // 全局唯一样本 ID
+  "source": "FinQA",                                 // 原始数据集名称
+  "split": "train",                                  // 统一后的数据划分：train / validation / test
+  "task": "financial_reasoning",                     // 统一后的任务类型
+  "language": "en",                                  // 样本主要语言，如 en / zh / ja
+
+  "input": {                                         // 模型实际输入
+    "images": [                                      // 输入图片列表，可为空，也可包含多张图片
+      "media/finqa/12345.png"                        // 图片路径，例如文档页、图表或渲染后的表格
+    ],                                               // 图片列表结束
+    "context": "Revenue increased from ...",         // 辅助上下文，如财报正文、长文档；没有时为空字符串
+    "prompt": "What is the percentage increase?",    // 当前需要模型完成的问题或指令
+    "history": []                                    // 历史多轮对话；MMTab 多轮任务使用，单轮任务为空
+  },                                                 // 模型输入结束
+
+  "output": {                                        // 模型需要学习生成的目标
+    "text": "14.46%",                                // SFT 时真正作为目标的标准输出
+    "format": "text",                                // 输出格式，如 text / number / json / html
+    "references": [                                  // 评测时允许的其他等价正确答案
+      "14.46 percent"                                // 一个等价参考答案
+    ]                                                // 参考答案列表结束
+  },                                                 // 模型输出结束
+
+  "annotations": {                                   // 原数据集提供的额外监督，不默认作为模型输出
+    "program": "divide(8.1, 56.0)",                  // FinQA 等数据中的计算程序
+    "answer_type": "arithmetic",                     // 原数据中的答案或任务类型
+    "scale": "percent"                               // 数值答案对应的单位或尺度
+  },                                                 // 额外监督信息结束
+
+  "meta": {                                          // 数据管理、追踪和去重信息
+    "source_id": "12345",                            // 原始数据集中的样本 ID
+    "group_id": "finqa:report:xxx",                  // 同一文档/表格/图片的分组 ID，用于防止数据泄漏
+    "subset": null,                                  // 数据集内部子任务，如 LongBench/MMTab subset
+    "original_split": "train",                       // 原始数据集中的 split 名称
+    "transforms": [                                  // 原始数据到当前样本经历的数据转换
+      "table_to_image:v1"                            // 例如将 FinQA 表格渲染成图片的转换版本
+    ]                                                // 转换记录结束
+  }                                                  // 元数据结束
+}                                                     // 当前样本结束
