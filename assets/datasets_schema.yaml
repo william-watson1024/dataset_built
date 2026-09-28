@@ -1,23 +1,41 @@
-schema_version: "1.0"                                # 当前统一数据 Schema 的版本
+schema_version: "1.0"                              # 当前统一数据 Schema 的版本
 
-dataset:                                             # 原始数据集信息
-  name: FinQA                                        # 数据集名称
-  version: "1.0"                                     # 使用的原始数据集版本
+dataset:                                           # 原始数据集基本信息
+  name: FinQA                                      # 数据集名称
+  version: "local_snapshot"                        # 原始数据版本；无法确定正式版本时使用 local_snapshot
+  languages:                                      # 数据集包含的语言
+    - en                                           # 英文
 
-conversion:                                          # 数据转换配置
-  converter: finqa                                   # 使用的 Converter
-  version: "1.0"                                     # Converter 版本
+conversion:                                        # 原始数据到 Canonical Schema 的转换配置
+  converter: finqa                                # 使用的 Converter 名称
+  version: "1.0"                                  # Converter 实现版本
 
-evaluation:                                          # 官方评测配置
-  evaluator: finqa                                   # 使用的评测器
-  metrics:                                           # 需要计算的评价指标
-    - execution_accuracy                             # 答案执行结果准确率
-    - program_accuracy                               # 推理程序准确率
-  rules:                                             # 官方指标对应的具体计算规则
-    normalize_numbers: true                          # 是否进行数值标准化
-    evaluate_program: true                           # 是否评测 Program
+source_files:                                      # 原始数据文件集合
+  train:                                           # 原始训练集文件
+    - datasets/FinQA/dataset/train.json            # 一个训练集文件
+  validation:                                      # 原始验证集文件
+    - datasets/FinQA/dataset/dev.json              # FinQA 官方 dev 文件
+  test:                                            # 原始测试集文件
+    - datasets/FinQA/dataset/test.json             # FinQA 官方 test 文件
 
-files:                                               # 转换完成后的数据文件
-  train: processed/finqa/train.jsonl                 # 训练集
-  validation: processed/finqa/validation.jsonl       # 验证集
-  test: processed/finqa/test.jsonl                   # 测试集
+split_aliases:                                     # 原始 split 名称到统一 split 名称的映射
+  train: train                                     # 原始 train → train
+  dev: validation                                 # 原始 dev → validation
+  test: test                                       # 原始 test → test
+
+evaluation:                                        # 官方评测配置
+  evaluator: finqa                                # 使用的评测器名称
+  metrics:                                         # 需要计算的评价指标
+    - execution_accuracy                           # 最终执行结果准确率
+    - program_accuracy                             # 推理程序准确率
+  rules:                                           # 官方评测规则
+    normalize_numbers: true                        # 是否进行数值标准化
+    evaluate_program: true                         # 是否评测 Program
+
+files:                                             # 转换后的 Canonical 数据文件
+  train:                                           # 统一训练集文件
+    - processed/finqa/train.jsonl                  # Canonical train JSONL
+  validation:                                      # 统一验证集文件
+    - processed/finqa/validation.jsonl             # Canonical validation JSONL
+  test:                                            # 统一测试集文件
+    - processed/finqa/test.jsonl                   # Canonical test JSONL
