@@ -1,0 +1,44 @@
+schema_version: "1.0"
+
+dataset:
+  name: ChartQA
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: chartqa
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/train/train_human.json
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/train/train_augmented.json
+  validation:
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/val/val_human.json
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/val/val_augmented.json
+  test:
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/test/test_human.json
+    - ${DATASETS_ROOT}/ChartQA/ChartQA Dataset/test/test_augmented.json
+
+split_aliases:
+  train: train
+  val: validation
+  validation: validation
+  test: test
+
+evaluation:
+  evaluator: chartqa
+  metrics:
+    - accuracy
+  rules:
+    match_exact_answer: true
+    answers_are_available_for_test: true
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/chartqa/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/chartqa/validation.jsonl
+  test:
+    - ${PROCESSED_ROOT}/chartqa/test.jsonl
