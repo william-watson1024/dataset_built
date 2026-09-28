@@ -61,6 +61,18 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "taskCatalog": {
+      "type": "object",
+      "description": "Dataset-specific catalog of stable Canonical task names.",
+      "additionalProperties": {
+        "$ref": "#/$defs/taskDefinition"
+      }
+    },
+    "taskDefinition": {
+      "type": "object",
+      "description": "Metadata and source mapping for one Canonical task.",
+      "additionalProperties": true
+    },
     "evaluation": {
       "type": "object",
       "additionalProperties": false,
@@ -71,7 +83,13 @@
           "type": "array",
           "items": { "type": "string" }
         },
-        "rules": { "type": "object", "additionalProperties": true }
+        "rules": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "tasks": { "$ref": "#/$defs/taskCatalog" }
+          }
+        }
       }
     }
   }
