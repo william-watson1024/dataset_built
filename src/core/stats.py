@@ -31,6 +31,13 @@ class Stats:
         self.with_images = 0
         self.without_images = 0
         self.lengths = {"context_chars": [], "prompt_chars": [], "output_chars": []}
+        self.entity_counts: list[int] = []
+        self.entity_labels: Counter[str] = Counter()
+        self.relation_counts: list[int] = []
+        self.samples_with_relations = 0
+        self.samples_without_relations = 0
+        self.bbox_samples = 0
+        self.words_samples = 0
 
     def update(self, sample: dict[str, Any]) -> None:
         self.total += 1
@@ -59,6 +66,24 @@ class Stats:
             self.steps_samples += 1
         if supervision.get("gold_inds") not in (None, {}, ""):
             self.gold_evidence_samples += 1
+        entities = supervision.get("entities")
+        if isinstance(entities, list):
+            self.entity_counts.append(len(entities))
+            for entity in entities:
+                if isinstance(entity, dict) and entity.get("label") is not None:
+                    self.entity_labels[str(entity["label"])] += 1
+        relations = supervision.get("relations")
+        if isinstance(relations, list):
+            relation_count = len(relations)
+            self.relation_counts.append(relation_count)
+            if relation_count:
+                self.samples_with_relations += 1
+            else:
+                self.samples_without_relations += 1
+        if isinstance(supervision.get("boxes"), list):
+            self.bbox_samples += 1
+        if isinstance(supervision.get("words"), list):
+            self.words_samples += 1
         images = sample["input"]["images"]
         image_count = len(images)
         self.total_references += image_count
@@ -117,6 +142,21 @@ class Stats:
             },
             "lengths": {key: self._summary(values) for key, values in self.lengths.items()},
             "output_formats": dict(sorted(self.formats.items())),
+            "entity_total": sum(self.entity_counts),
+            "entity_counts": self._summary(self.entity_counts),
+            "entity_labels": dict(sorted(self.entity_labels.items())),
+            "relation_total": sum(self.relation_counts),
+            "relation_counts": self._summary(self.relation_counts),
+            "samples_with_relations": self.samples_with_relations,
+            "samples_without_relations": self.samples_without_relations,
+            "bbox_coverage": {
+                "samples": self.bbox_samples,
+                "rate": self.bbox_samples / self.total if self.total else 0,
+            },
+            "words_coverage": {
+                "samples": self.words_samples,
+                "rate": self.words_samples / self.total if self.total else 0,
+            },
         }
 
     def write(self, path: str | Path) -> Path:

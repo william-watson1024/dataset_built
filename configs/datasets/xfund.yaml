@@ -1,0 +1,67 @@
+schema_version: "1.0"
+
+dataset:
+  name: XFUND
+  version: local_snapshot
+  languages:
+    - de
+    - es
+    - fr
+    - it
+    - ja
+    - pt
+    - zh
+
+conversion:
+  converter: xfund
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/XFUND/de.train.json
+    - ${DATASETS_ROOT}/XFUND/es.train.json
+    - ${DATASETS_ROOT}/XFUND/fr.train.json
+    - ${DATASETS_ROOT}/XFUND/it.train.json
+    - ${DATASETS_ROOT}/XFUND/ja.train.json
+    - ${DATASETS_ROOT}/XFUND/pt.train.json
+    - ${DATASETS_ROOT}/XFUND/zh.train.json
+  test:
+    - ${DATASETS_ROOT}/XFUND/de.val.json
+    - ${DATASETS_ROOT}/XFUND/es.val.json
+    - ${DATASETS_ROOT}/XFUND/fr.val.json
+    - ${DATASETS_ROOT}/XFUND/it.val.json
+    - ${DATASETS_ROOT}/XFUND/ja.val.json
+    - ${DATASETS_ROOT}/XFUND/pt.val.json
+    - ${DATASETS_ROOT}/XFUND/zh.val.json
+
+split_aliases:
+  train: train
+  val: test
+  validation: test
+  test: test
+
+evaluation:
+  evaluator: xfund
+  metrics:
+    - entity_f1
+    - relation_f1
+  rules:
+    official_val_is_test: true
+    preserve_entities: true
+    preserve_boxes_and_words: true
+    preserve_relations: true
+    tasks:
+      form_information_extraction:
+        source: XFUND
+        labels:
+          - header
+          - question
+          - answer
+          - other
+        description: multilingual form entity and key-value relation extraction
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/xfund/train.jsonl
+  test:
+    - ${PROCESSED_ROOT}/xfund/test.jsonl
