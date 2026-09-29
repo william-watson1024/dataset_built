@@ -38,6 +38,11 @@ class Stats:
         self.samples_without_relations = 0
         self.bbox_samples = 0
         self.words_samples = 0
+        self.event_counts: list[int] = []
+        self.event_types: Counter[str] = Counter()
+        self.argument_counts: list[int] = []
+        self.argument_roles: Counter[str] = Counter()
+        self.sentence_counts: list[int] = []
 
     def update(self, sample: dict[str, Any]) -> None:
         self.total += 1
@@ -84,6 +89,20 @@ class Stats:
             self.bbox_samples += 1
         if isinstance(supervision.get("words"), list):
             self.words_samples += 1
+        events = supervision.get("events")
+        if isinstance(events, list):
+            self.event_counts.append(len(events))
+            self.sentence_counts.append(len(supervision.get("sentences", [])))
+            for event in events:
+                if not isinstance(event, dict):
+                    continue
+                event_type = event.get("event_type")
+                if event_type is not None:
+                    self.event_types[str(event_type)] += 1
+                arguments = event.get("arguments")
+                if isinstance(arguments, dict):
+                    self.argument_counts.append(len(arguments))
+                    self.argument_roles.update(str(role) for role in arguments)
         images = sample["input"]["images"]
         image_count = len(images)
         self.total_references += image_count
@@ -157,6 +176,16 @@ class Stats:
                 "samples": self.words_samples,
                 "rate": self.words_samples / self.total if self.total else 0,
             },
+            "event_total": sum(self.event_counts),
+            "event_counts": self._summary(self.event_counts),
+            "event_types": dict(sorted(self.event_types.items())),
+            "argument_total": sum(self.argument_counts),
+            "argument_counts": self._summary(self.argument_counts),
+            "argument_roles": dict(sorted(self.argument_roles.items())),
+            "no_event_documents": sum(count == 0 for count in self.event_counts),
+            "single_event_documents": sum(count == 1 for count in self.event_counts),
+            "multi_event_documents": sum(count > 1 for count in self.event_counts),
+            "sentence_counts": self._summary(self.sentence_counts),
         }
 
     def write(self, path: str | Path) -> Path:

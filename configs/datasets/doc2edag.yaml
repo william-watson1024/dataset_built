@@ -1,0 +1,54 @@
+schema_version: "1.0"
+
+dataset:
+  name: Doc2EDAG
+  version: local_snapshot
+  languages:
+    - zh
+
+conversion:
+  converter: doc2edag
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/Doc2EDAG/data/Data/train.json
+  validation:
+    - ${DATASETS_ROOT}/Doc2EDAG/data/Data/dev.json
+  test:
+    - ${DATASETS_ROOT}/Doc2EDAG/data/Data/test.json
+
+split_aliases:
+  train: train
+  dev: validation
+  validation: validation
+  test: test
+
+evaluation:
+  evaluator: doc2edag
+  metrics:
+    - role_micro_precision
+    - role_micro_recall
+    - role_micro_f1
+  rules:
+    preserve_official_event_types: true
+    document_level_extraction: true
+    matching: same_event_type_maximum_role_overlap_without_replacement
+    tasks:
+      financial_event_extraction:
+        source: Doc2EDAG
+        event_types:
+          - EquityOverweight
+          - EquityUnderweight
+          - EquityFreeze
+          - EquityPledge
+          - EquityRepurchase
+        description: Chinese financial announcement event and argument extraction
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/doc2edag/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/doc2edag/validation.jsonl
+  test:
+    - ${PROCESSED_ROOT}/doc2edag/test.jsonl
