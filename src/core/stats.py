@@ -31,6 +31,7 @@ class Stats:
         self.with_images = 0
         self.without_images = 0
         self.lengths = {"context_chars": [], "prompt_chars": [], "output_chars": []}
+        self.context_summary_ratios: list[float] = []
         self.entity_counts: list[int] = []
         self.entity_labels: Counter[str] = Counter()
         self.relation_counts: list[int] = []
@@ -116,7 +117,10 @@ class Stats:
         self.lengths["prompt_chars"].append(len(sample["input"]["prompt"]))
         if sample["output"]["references"]:
             self.supervised += 1
-            self.lengths["output_chars"].append(len(sample["output"]["text"]))
+            output_chars = len(sample["output"]["text"])
+            self.lengths["output_chars"].append(output_chars)
+            if sample.get("task") == "government_report_summarization" and output_chars:
+                self.context_summary_ratios.append(len(sample["input"]["context"]) / output_chars)
         else:
             self.unsupervised += 1
         subset = sample.get("meta", {}).get("subset")
@@ -124,10 +128,31 @@ class Stats:
             self.subsets[str(subset)] += 1
 
     @staticmethod
-    def _summary(values: list[int]) -> dict[str, float | int]:
+    def _percentile(values: list[int] | list[float], fraction: float) -> float | int:
         if not values:
-            return {"count": 0, "min": 0, "max": 0, "average": 0}
-        return {"count": len(values), "min": min(values), "max": max(values), "average": sum(values) / len(values)}
+            return 0
+        ordered = sorted(values)
+        position = (len(ordered) - 1) * fraction
+        lower = int(position)
+        upper = min(lower + 1, len(ordered) - 1)
+        weight = position - lower
+        value = ordered[lower] + (ordered[upper] - ordered[lower]) * weight
+        return int(value) if float(value).is_integer() else value
+
+    @classmethod
+    def _summary(cls, values: list[int] | list[float]) -> dict[str, float | int]:
+        if not values:
+            return {"count": 0, "min": 0, "max": 0, "average": 0, "p50": 0, "p90": 0, "p95": 0, "p99": 0}
+        return {
+            "count": len(values),
+            "min": min(values),
+            "max": max(values),
+            "average": sum(values) / len(values),
+            "p50": cls._percentile(values, 0.50),
+            "p90": cls._percentile(values, 0.90),
+            "p95": cls._percentile(values, 0.95),
+            "p99": cls._percentile(values, 0.99),
+        }
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -160,6 +185,7 @@ class Stats:
                 "distribution": dict(sorted(self.image_counts.items(), key=lambda item: int(item[0])))
             },
             "lengths": {key: self._summary(values) for key, values in self.lengths.items()},
+            "context_summary_char_ratio": self._summary(self.context_summary_ratios),
             "output_formats": dict(sorted(self.formats.items())),
             "entity_total": sum(self.entity_counts),
             "entity_counts": self._summary(self.entity_counts),

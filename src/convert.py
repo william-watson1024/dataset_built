@@ -13,6 +13,7 @@ from src.converters.finqa import FinQAConverter
 from src.converters.tatqa import TATQAConverter
 from src.converters.xfund import XFUNDConverter
 from src.converters.doc2edag import Doc2EDAGConverter
+from src.converters.govreport import GovReportConverter
 from src.core.config import ConfigError, get_runtime_paths, load_dataset_config
 from src.core.stats import Stats
 from src.core.validator import SchemaValidator, ValidationError
@@ -27,6 +28,7 @@ CONVERTERS = {
     "tatqa": TATQAConverter,
     "xfund": XFUNDConverter,
     "doc2edag": Doc2EDAGConverter,
+    "govreport": GovReportConverter,
 }
 
 

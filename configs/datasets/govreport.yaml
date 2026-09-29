@@ -1,0 +1,49 @@
+schema_version: "1.0"
+
+dataset:
+  name: GovReport
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: govreport
+  version: "1.0"
+
+source_files:
+  train:
+    - ${DATASETS_ROOT}/GovReport/train-00000-of-00002.parquet
+    - ${DATASETS_ROOT}/GovReport/train-00001-of-00002.parquet
+  validation:
+    - ${DATASETS_ROOT}/GovReport/validation.parquet
+  test:
+    - ${DATASETS_ROOT}/GovReport/test.parquet
+
+split_aliases:
+  train: train
+  validation: validation
+  val: validation
+  test: test
+
+evaluation:
+  evaluator: govreport
+  metrics:
+    - ROUGE-1
+    - ROUGE-2
+    - ROUGE-L
+  rules:
+    preserve_full_source: true
+    preserve_reference_summary: true
+    character_statistics_only: true
+    tasks:
+      government_report_summarization:
+        source: GovReport
+        description: long government report summarization
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/govreport/train.jsonl
+  validation:
+    - ${PROCESSED_ROOT}/govreport/validation.jsonl
+  test:
+    - ${PROCESSED_ROOT}/govreport/test.jsonl
