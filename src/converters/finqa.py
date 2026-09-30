@@ -117,19 +117,23 @@ class FinQAConverter(Converter):
         source_id = str(raw_sample.get("id") or raw_sample.get("filename") or raw_sample.get("__row_index"))
         filename = str(raw_sample.get("filename") or source_id)
         answer = qa.get("answer")
-        # Some local FinQA records preserve the official execution answer in
-        # ``exe_ans`` while leaving the textual ``answer`` field blank.  A
-        # blank string is not a usable Canonical reference, so use the
-        # execution answer as the explicit fallback and keep the raw QA
-        # object unchanged in annotations.raw.
+        answer_source = "qa.answer"
+        # Some local FinQA records have a blank textual answer but retain the
+        # official execution result of the gold program.  Use that result as
+        # a canonical fallback while preserving the raw QA object unchanged.
         if isinstance(answer, str) and not answer.strip():
-            answer = qa.get("exe_ans")
+            fallback = qa.get("exe_ans")
+            if fallback is not None and not (isinstance(fallback, str) and not fallback.strip()):
+                answer = fallback
+                answer_source = "qa.exe_ans_fallback"
         answer_text = self._answer_text(answer)
         references = [answer_text] if answer_text.strip() else []
         original_split = "dev" if split == "validation" else split
         transforms = ["finqa_table_to_png:v1"]
         if split == "validation":
             transforms.append("dev_to_validation:v1")
+        if answer_source == "qa.exe_ans_fallback":
+            transforms.append("finqa_exe_ans_fallback:v1")
         return {
             "id": f"finqa:{split}:{source_id}",
             "source": "FinQA",
@@ -152,6 +156,7 @@ class FinQAConverter(Converter):
                 "evaluation": {
                     "answer": answer,
                     "exe_ans": qa.get("exe_ans"),
+                    "answer_source": answer_source,
                     "has_answer": bool(references),
                 },
                 "raw": {

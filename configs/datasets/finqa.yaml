@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 
 dataset:
   name: FinQA
@@ -8,7 +8,7 @@ dataset:
 
 conversion:
   converter: finqa
-  version: "1.0"
+  version: "1.1"
 
 source_files:
   train:
