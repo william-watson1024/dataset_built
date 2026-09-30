@@ -117,8 +117,15 @@ class FinQAConverter(Converter):
         source_id = str(raw_sample.get("id") or raw_sample.get("filename") or raw_sample.get("__row_index"))
         filename = str(raw_sample.get("filename") or source_id)
         answer = qa.get("answer")
+        # Some local FinQA records preserve the official execution answer in
+        # ``exe_ans`` while leaving the textual ``answer`` field blank.  A
+        # blank string is not a usable Canonical reference, so use the
+        # execution answer as the explicit fallback and keep the raw QA
+        # object unchanged in annotations.raw.
+        if isinstance(answer, str) and not answer.strip():
+            answer = qa.get("exe_ans")
         answer_text = self._answer_text(answer)
-        references = [answer_text] if answer is not None else []
+        references = [answer_text] if answer_text.strip() else []
         original_split = "dev" if split == "validation" else split
         transforms = ["finqa_table_to_png:v1"]
         if split == "validation":

@@ -10,10 +10,6 @@ conversion:
   converter: finqa
   version: "1.0"
 
-paths:
-  source_dir: ${DATASETS_ROOT}/FinQA/dataset
-  output_dir: ${PROCESSED_ROOT}/finqa
-
 source_files:
   train:
     - ${DATASETS_ROOT}/FinQA/dataset/train.json
