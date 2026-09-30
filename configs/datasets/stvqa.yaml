@@ -1,0 +1,47 @@
+schema_version: "1.0"
+
+dataset:
+  name: ST-VQA
+  version: local_snapshot
+  languages:
+    - en
+
+conversion:
+  converter: stvqa
+  version: "1.0"
+
+# The local snapshot contains the official Task 3 train+validation data
+# merged into six Parquet shards. It has no recoverable split boundary.
+source_files:
+  train:
+    - ${DATASETS_ROOT}/ST-VQA/train-00000-of-00006.parquet
+    - ${DATASETS_ROOT}/ST-VQA/train-00001-of-00006.parquet
+    - ${DATASETS_ROOT}/ST-VQA/train-00002-of-00006.parquet
+    - ${DATASETS_ROOT}/ST-VQA/train-00003-of-00006.parquet
+    - ${DATASETS_ROOT}/ST-VQA/train-00004-of-00006.parquet
+    - ${DATASETS_ROOT}/ST-VQA/train-00005-of-00006.parquet
+
+split_aliases:
+  train: train
+  validation: train
+  val: train
+  test: test
+
+evaluation:
+  evaluator: stvqa
+  metrics:
+    - ANLS
+  rules:
+    match_against_any_reference: true
+    normalized_edit_distance_threshold: 0.5
+    preserve_task_metadata: true
+    preserve_candidate_lexicon: true
+    default_task_type: task_3_open_dictionary
+    tasks:
+      scene_text_vqa:
+        source: ST-VQA
+        description: scene text visual question answering
+
+files:
+  train:
+    - ${PROCESSED_ROOT}/stvqa/train.jsonl

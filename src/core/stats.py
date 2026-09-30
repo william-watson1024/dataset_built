@@ -12,6 +12,7 @@ class Stats:
         self.total = 0
         self.splits: Counter[str] = Counter()
         self.tasks: Counter[str] = Counter()
+        self.task_types: Counter[str] = Counter()
         self.languages: Counter[str] = Counter()
         self.formats: Counter[str] = Counter()
         self.subsets: Counter[str] = Counter()
@@ -54,6 +55,9 @@ class Stats:
         self.formats[sample["output"]["format"]] += 1
         supervision = sample.get("annotations", {}).get("supervision", {})
         evaluation = sample.get("annotations", {}).get("evaluation", {})
+        task_type = evaluation.get("task_type") or evaluation.get("task")
+        if task_type is not None:
+            self.task_types[str(task_type)] += 1
         for field, counter in (
             ("answer_type", self.answer_types),
             ("answer_from", self.answer_froms),
@@ -160,6 +164,7 @@ class Stats:
             "total_samples": self.total,
             "splits": dict(sorted(self.splits.items())),
             "tasks": dict(sorted(self.tasks.items())),
+            "task_types": dict(sorted(self.task_types.items())),
             "languages": dict(sorted(self.languages.items())),
             "subsets": dict(sorted(self.subsets.items())),
             "supervised": self.supervised,

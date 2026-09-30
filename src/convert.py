@@ -14,6 +14,7 @@ from src.converters.tatqa import TATQAConverter
 from src.converters.xfund import XFUNDConverter
 from src.converters.doc2edag import Doc2EDAGConverter
 from src.converters.govreport import GovReportConverter
+from src.converters.stvqa import STVQAConverter
 from src.core.config import ConfigError, get_runtime_paths, load_dataset_config
 from src.core.stats import Stats
 from src.core.validator import SchemaValidator, ValidationError
@@ -29,6 +30,7 @@ CONVERTERS = {
     "xfund": XFUNDConverter,
     "doc2edag": Doc2EDAGConverter,
     "govreport": GovReportConverter,
+    "stvqa": STVQAConverter,
 }
 
 
@@ -71,7 +73,15 @@ def run(config_path: str, limit: int | None = None, clean_output: bool = False) 
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if converter_class in (DocVQAConverter, ChartQAConverter, MMTabConverter, FinQAConverter, TATQAConverter, XFUNDConverter):
+    if converter_class in (
+        DocVQAConverter,
+        ChartQAConverter,
+        MMTabConverter,
+        FinQAConverter,
+        TATQAConverter,
+        XFUNDConverter,
+        STVQAConverter,
+    ):
         converter = converter_class(config, root, output_root / "media")
     else:
         converter = converter_class(config, root)
