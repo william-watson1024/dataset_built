@@ -1,0 +1,164 @@
+{
+  "version": "1.0",
+  "datasets": [
+    {
+      "name": "chartqa",
+      "path": "processed/chartqa/train.jsonl",
+      "enabled": true,
+      "sample_count": 28299,
+      "task_distribution": {
+        "chart_question_answering": 28299
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/chartqa/validation.jsonl"
+        },
+        {
+          "split": "test",
+          "path": "processed/chartqa/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "doc2edag",
+      "path": "processed/doc2edag/train.jsonl",
+      "enabled": true,
+      "sample_count": 25632,
+      "task_distribution": {
+        "financial_event_extraction": 25632
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/doc2edag/validation.jsonl"
+        },
+        {
+          "split": "test",
+          "path": "processed/doc2edag/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "docvqa",
+      "path": "processed/docvqa/train.jsonl",
+      "enabled": true,
+      "sample_count": 39463,
+      "task_distribution": {
+        "document_visual_question_answering": 39463
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/docvqa/validation.jsonl"
+        },
+        {
+          "split": "test",
+          "path": "processed/docvqa/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "finqa",
+      "path": "processed/finqa/train.jsonl",
+      "enabled": true,
+      "sample_count": 6251,
+      "task_distribution": {
+        "financial_table_reasoning": 6251
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/finqa/validation.jsonl"
+        },
+        {
+          "split": "test",
+          "path": "processed/finqa/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "govreport",
+      "path": "processed/govreport/train.jsonl",
+      "enabled": true,
+      "sample_count": 17519,
+      "task_distribution": {
+        "government_report_summarization": 17519
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/govreport/validation.jsonl"
+        },
+        {
+          "split": "test",
+          "path": "processed/govreport/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "mmtab",
+      "path": "processed/mmtab/train.jsonl",
+      "enabled": true,
+      "sample_count": 232879,
+      "task_distribution": {
+        "mmtab_merged_cell_detection": 8000,
+        "mmtab_row_column_extraction": 8000,
+        "mmtab_table_cell_extraction": 8000,
+        "mmtab_table_cell_recognition": 8000,
+        "mmtab_table_fact_verification": 31321,
+        "mmtab_table_multitask": 37204,
+        "mmtab_table_question_answering": 92960,
+        "mmtab_table_recognition": 8000,
+        "mmtab_table_structure_recognition": 8000,
+        "mmtab_table_to_text": 23394
+      },
+      "eval_sources": [
+        {
+          "split": "test",
+          "path": "processed/mmtab/test.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "stvqa",
+      "path": "processed/stvqa/train.jsonl",
+      "enabled": true,
+      "sample_count": 26074,
+      "task_distribution": {
+        "scene_text_vqa": 26074
+      },
+      "eval_sources": []
+    },
+    {
+      "name": "tatqa",
+      "path": "processed/tatqa/train.jsonl",
+      "enabled": true,
+      "sample_count": 13215,
+      "task_distribution": {
+        "financial_table_reasoning": 13215
+      },
+      "eval_sources": [
+        {
+          "split": "validation",
+          "path": "processed/tatqa/validation.jsonl"
+        }
+      ]
+    },
+    {
+      "name": "xfund",
+      "path": "processed/xfund/train.jsonl",
+      "enabled": true,
+      "sample_count": 1043,
+      "task_distribution": {
+        "form_information_extraction": 1043
+      },
+      "eval_sources": [
+        {
+          "split": "test",
+          "path": "processed/xfund/test.jsonl"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 # Generated validation and conversion artifacts
 /tmp/
 /processed/
+/training/ms_swift/datasets/
+/training/ms_swift/all_train.jsonl
+/training/ms_swift/train.jsonl
+/training/ms_swift/eval.jsonl
+/training/ms_swift/stats.json
 /outputs/
 /checkpoints/
 
